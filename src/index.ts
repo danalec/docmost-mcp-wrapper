@@ -566,7 +566,7 @@ async function run() {
     try {
       await transport.handleRequest(req, res, body);
     } catch (err) {
-      console.error("MCP transport error:", err.message);
+      console.error("MCP transport error:", (err as Error).message);
       if (!res.headersSent) {
         res.writeHead(500, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ error: "Internal server error" }));
