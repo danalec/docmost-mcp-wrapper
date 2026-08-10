@@ -14,8 +14,6 @@ RUN npm run build
 FROM node:22-alpine
 
 # Install Python and mcp-proxy (Python package for stdio-to-HTTP bridging)
-RUN apk add --no-cache python3 py3-pip && \
-    pip3 install --break-system-packages --no-cache-dir mcp-proxy
 
 # Create non-root user
 

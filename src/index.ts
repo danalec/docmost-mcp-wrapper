@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { createServer } from "http";
 import FormData from "form-data";
 import axios, { AxiosInstance } from "axios";
 import { z } from "zod";
@@ -544,9 +545,38 @@ server.registerTool(
   },
 );
 
+
 async function run() {
-  const transport = new StdioServerTransport();
+  const PORT = parseInt(process.env.PORT || "8088", 10);
+  const transport = new StreamableHTTPServerTransport();
   await server.connect(transport);
+
+  const httpServer = createServer(async (req, res) => {
+    if (req.url === "/health" && req.method === "GET") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ status: "ok" }));
+      return;
+    }
+
+    let body = "";
+    for await (const chunk of req) {
+      body += chunk;
+    }
+
+    try {
+      await transport.handleRequest(req, res, body);
+    } catch (err) {
+      console.error("MCP transport error:", err.message);
+      if (!res.headersSent) {
+        res.writeHead(500, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "Internal server error" }));
+      }
+    }
+  });
+
+  httpServer.listen(PORT, () => {
+    console.error("Docmost MCP server listening on port " + PORT);
+  });
 }
 
 run().catch((error) => {
