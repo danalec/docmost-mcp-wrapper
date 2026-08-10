@@ -558,13 +558,9 @@ async function run() {
       return;
     }
 
-    let body = "";
-    for await (const chunk of req) {
-      body += chunk;
-    }
 
     try {
-      await transport.handleRequest(req, res, body);
+      await transport.handleRequest(req, res);
     } catch (err) {
       console.error("MCP transport error:", (err as Error).message);
       if (!res.headersSent) {
