@@ -18,8 +18,6 @@ RUN apk add --no-cache python3 py3-pip && \
     pip3 install --break-system-packages --no-cache-dir mcp-proxy
 
 # Create non-root user
-RUN addgroup -g 1000 mcpuser && \
-    adduser -u 1000 -G mcpuser -s /bin/sh -D mcpuser
 
 WORKDIR /app
 
@@ -38,6 +36,6 @@ EXPOSE 8088
 
 # Non-root user. If the Tailscale hook requires root, override with:
 #   --user root --cap-add=NET_ADMIN --cap-add=NET_RAW
-USER mcpuser
+USER node
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
