@@ -21,6 +21,12 @@ else
     die "DOCMOST_EMAIL not available (file ${EMAIL_FILE} missing and env var empty)"
 fi
 
+# A readable but empty (or whitespace-only) file resolves to an empty value.
+# Refuse here rather than starting a server that can only fail at first login.
+if [ -z "${DOCMOST_EMAIL}" ]; then
+    die "DOCMOST_EMAIL resolved to an empty value (file ${EMAIL_FILE} is empty or whitespace-only)"
+fi
+
 DOCMOST_PASSWORD=""
 if [ -f "${PASSWORD_FILE}" ] && [ -r "${PASSWORD_FILE}" ]; then
     DOCMOST_PASSWORD="$(cat "${PASSWORD_FILE}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
@@ -29,6 +35,10 @@ elif [ -n "${DOCMOST_PASSWORD:-}" ]; then
     log "Using DOCMOST_PASSWORD from environment"
 else
     die "DOCMOST_PASSWORD not available (file ${PASSWORD_FILE} missing and env var empty)"
+fi
+
+if [ -z "${DOCMOST_PASSWORD}" ]; then
+    die "DOCMOST_PASSWORD resolved to an empty value (file ${PASSWORD_FILE} is empty or whitespace-only)"
 fi
 
 export DOCMOST_EMAIL DOCMOST_PASSWORD
