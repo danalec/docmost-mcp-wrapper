@@ -13,10 +13,6 @@ RUN npm run build
 # Runtime stage
 FROM node:22-alpine
 
-# Install Python and mcp-proxy (Python package for stdio-to-HTTP bridging)
-
-# Create non-root user
-
 WORKDIR /app
 
 # Production dependencies only (no devDependencies like typescript)
