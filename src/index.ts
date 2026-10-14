@@ -260,11 +260,10 @@ class DocmostClient {
         "Failed to update page content via realtime collaboration:",
         error,
       );
-      const tokenPreview = collabToken
-        ? collabToken.substring(0, 15) + "..."
-        : "null";
+      // Report whether a token was obtained, never any part of it: this message
+      // travels back to the MCP client as the tool result.
       throw new Error(
-        `Failed to update page content: ${error.message} (Token: ${tokenPreview})`,
+        `Failed to update page content: ${error.message} (Collab token was ${collabToken ? "present" : "missing"})`,
       );
     }
 

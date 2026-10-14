@@ -25,9 +25,8 @@ export async function updatePageContentRealtime(
   baseUrl: string,
 ): Promise<void> {
   console.error(`Starting realtime update for page ${pageId}`);
-  console.error(
-    `Token prefix: ${collabToken ? collabToken.substring(0, 5) : "NONE"}...`,
-  );
+  // Never log the token itself — not even a prefix. Presence is enough to debug.
+  console.error(`Collab token: ${collabToken ? "present" : "MISSING"}`);
 
   // 1. Convert Markdown to HTML
   const html = await marked.parse(markdownContent);
